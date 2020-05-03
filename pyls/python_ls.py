@@ -273,7 +273,7 @@ class PythonLanguageServer(MethodDispatcher):
             for el1 in res:
                 for el2 in el1:
                     if 'message' in el2:
-                        el2['message'] = f"[{ el2.get('source', '--') }] { el2['message'] }"
+                        el2.message = f"[{ el2.get('source', '--') }] { el2['message'] }"
             with open(os.path.expanduser('~/py.log'), 'a') as f:
                 f.writelines([str(res), '\n'])
 
