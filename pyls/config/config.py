@@ -104,7 +104,11 @@ class Config(object):
         settings.cache_clear() when the config is updated
         """
         settings = {}
+
+        dump('self._settings', self._settings)
         sources = self._settings.get('configurationSources', DEFAULT_CONFIG_SOURCES)
+
+        dump('sources', sources)
 
         for source_name in reversed(sources):
             source = self._config_sources.get(source_name)
@@ -143,13 +147,24 @@ class Config(object):
         """Recursively merge the given settings into the current settings."""
         self.settings.cache_clear()
         self._settings = settings
+        dump("updatesettings", settings)
         log.info("Updated settings to %s", self._settings)
         self._update_disabled_plugins()
 
     def _update_disabled_plugins(self):
         # All plugins default to enabled
+
+        dump('settings', self.settings())
+
         self._disabled_plugins = [
             plugin for name, plugin in self.plugin_manager.list_name_plugin()
             if not self.settings().get('plugins', {}).get(name, {}).get('enabled', True)
         ]
         log.info("Disabled plugins: %s", self._disabled_plugins)
+
+
+def dump(label, obj):
+    import os
+
+    with open(os.path.expanduser('~/py.log'), 'a') as f:
+        f.writelines([label, ':', str(obj), '\n'])

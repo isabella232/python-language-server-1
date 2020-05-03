@@ -269,7 +269,14 @@ class PythonLanguageServer(MethodDispatcher):
         workspace = self._match_uri_to_workspace(doc_uri)
         if doc_uri in workspace.documents:
             res = self._hook('pyls_lint', doc_uri, is_saved=is_saved)
-            res.message = f"[{res.source}] res.message"
+
+            for el1 in res:
+                for el2 in el1:
+                    if 'message' in el2:
+                        el2['message'] = f"[{ el2.get('source', '--') }] { el2['message'] }"
+            with open(os.path.expanduser('~/py.log'), 'a') as f:
+                f.writelines([str(res), '\n'])
+
             workspace.publish_diagnostics(
                 doc_uri,
                 flatten(res)
