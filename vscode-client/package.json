@@ -25,6 +25,11 @@
                     "default": "pyls",
                     "description": "Language server executable"
                 },
+                "pyls.showPluginNames": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "Include python plugin name in messages."
+                },
                 "pyls.configurationSources": {
                     "type": "array",
                     "default": ["pycodestyle"],

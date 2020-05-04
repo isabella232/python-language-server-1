@@ -268,18 +268,17 @@ class PythonLanguageServer(MethodDispatcher):
         # Since we're debounced, the document may no longer be open
         workspace = self._match_uri_to_workspace(doc_uri)
         if doc_uri in workspace.documents:
-            res = self._hook('pyls_lint', doc_uri, is_saved=is_saved)
+            response = self._hook('pyls_lint', doc_uri, is_saved=is_saved)
 
-            for el1 in res:
-                for el2 in el1:
-                    if 'message' in el2:
-                        el2.message = f"[{ el2.get('source', '--') }] { el2['message'] }"
-            with open(os.path.expanduser('~/py.log'), 'a') as f:
-                f.writelines([str(res), '\n'])
+            if self.config.settings().get('showPluginNames', False):
+                for items in response:
+                    for item in items:
+                        if 'message' in item:
+                            item['message'] = f"[{ item.get('source', '--') }] { item['message'] }"
 
             workspace.publish_diagnostics(
                 doc_uri,
-                flatten(res)
+                flatten(response)
             )
 
     def references(self, doc_uri, position, exclude_declaration):
